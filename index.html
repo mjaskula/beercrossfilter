@@ -123,13 +123,21 @@ h1, h2 {
   margin-bottom: 1px;
 }
 
-#style-list .time {
+#style-list .cat-number {
   color: #999;
+  width: 50px;
+}
+
+#style-list .cat-name {
+  width: 200px;
+}
+
+#style-list .subcat-name {
+  width: 200px;
 }
 
 #style-list .style div {
   display: inline-block;
-  width: 100px;
 }
 
 #style-list div.distance,
@@ -206,8 +214,8 @@ d3.json("bjcp.json", function(categoryHolder) {
       formatTime = d3.time.format("%I:%M %p"); // TODO: unnecessary formatters
 
   // A nest operator, for grouping the style list.
-  var nestByDate = d3.nest()
-      .key(function(d) { return d3.time.day(d.date); });
+  var nestById = d3.nest()
+      .key(function(d) { return d.id; });
 
   var styles = new Array();
 
@@ -221,8 +229,6 @@ d3.json("bjcp.json", function(categoryHolder) {
   // A little coercion, since the CSV is untyped.
   styles.forEach(function(d, i) {
     d.index = i;
-    // TODO: might need this for Numbers
-    // d.delay = +d.delay;
   });
 
   // Create the crossfilter for the relevant dimensions and groups.
@@ -319,46 +325,28 @@ d3.json("bjcp.json", function(categoryHolder) {
   };
 
   function styleList(div) {
-    var stylesByDate = nestByDate.entries(date.top(40));
+    var stylesById = nestById.entries(og.top(1000)); //All of em
 
     div.each(function() {
-      var date = d3.select(this).selectAll(".date")
-          .data(stylesByDate, function(d) { return d.key; });
-
-      date.enter().append("div")
-          .attr("class", "date")
-        .append("div")
-          .attr("class", "day")
-          .text(function(d) { return formatDate(d.values[0].date); });
-
-      date.exit().remove();
-
-      var style = date.order().selectAll(".style")
-          .data(function(d) { return d.values; }, function(d) { return d.index; });
+      var style = d3.select(this).selectAll(".date")
+          .data(stylesById);
 
       var styleEnter = style.enter().append("div")
           .attr("class", "style");
 
       styleEnter.append("div")
-          .attr("class", "time")
-          .text(function(d) { return formatTime(d.date); });
+          .attr("class", "cat-number")
+          .text(function(d) { 
+            return d.key; 
+          });
 
       styleEnter.append("div")
-          .attr("class", "origin")
-          .text(function(d) { return d.origin; });
+          .attr("class", "cat-name")
+          .text(function(d) { return d.values[0].category; });
 
       styleEnter.append("div")
-          .attr("class", "destination")
-          .text(function(d) { return d.destination; });
-
-      styleEnter.append("div")
-          .attr("class", "distance")
-          .text(function(d) { return formatNumber(d.distance) + " mi."; });
-
-      styleEnter.append("div")
-          .attr("class", "delay")
-          .classed("early", function(d) { return d.delay < 0; })
-          .text(function(d) { return formatChange(d.delay) + " min."; });
+          .attr("class", "subcat-name")
+          .text(function(d) { return d.values[0].name; });
 
       style.exit().remove();
 
