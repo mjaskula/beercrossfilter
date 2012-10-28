@@ -182,6 +182,9 @@ aside {
   <div id="srm-chart" class="chart">
     <div class="title">Color</div>
   </div>
+  <div id="cat-chart" class="chart">
+    <div class="title">Category</div>
+  </div>
 </div>
 
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> styles selected.</aside>
@@ -222,6 +225,9 @@ d3.json("bjcp.json", function(categoryHolder) {
   categoryHolder.categories.forEach(function(category) {
     category.subcategories.forEach(function(style) {
       style.category = category.name;
+      var id = style.id;
+      style.catId = +id.substring(0, id.length - 1);
+      style.subCatId = id.substring(id.length - 1);
       styles.push(style);
     });
   });
@@ -243,7 +249,9 @@ d3.json("bjcp.json", function(categoryHolder) {
       ibu = style.dimension(function(d) { return d.ibu_low; }),
       ibus = ibu.group(),
       srm = style.dimension(function(d) { return d.srm_low; }),
-      srms = srm.group();
+      srms = srm.group(),
+      cat = style.dimension(function(d) { return d.catId; }),
+      cats = cat.group();
 
   var charts = [
 
@@ -282,6 +290,12 @@ d3.json("bjcp.json", function(categoryHolder) {
         .domain([0, 70])
         .rangeRound([0, 700])),
 
+    barChart()
+        .dimension(cat)
+        .group(cats)
+      .x(d3.scale.linear()
+        .domain([1, 29])
+        .rangeRound([1, 290])),
 
   ];
 
@@ -325,10 +339,10 @@ d3.json("bjcp.json", function(categoryHolder) {
   };
 
   function styleList(div) {
-    var stylesById = nestById.entries(og.top(1000)); //All of em
+    var stylesById = nestById.entries(cat.top(1000)); //All of em
 
     div.each(function() {
-      var style = d3.select(this).selectAll(".date")
+      var style = d3.select(this).selectAll(".style")
           .data(stylesById);
 
       var styleEnter = style.enter().append("div")
@@ -336,9 +350,7 @@ d3.json("bjcp.json", function(categoryHolder) {
 
       styleEnter.append("div")
           .attr("class", "cat-number")
-          .text(function(d) { 
-            return d.key; 
-          });
+          .text(function(d) { return d.key; });
 
       styleEnter.append("div")
           .attr("class", "cat-name")
@@ -350,7 +362,6 @@ d3.json("bjcp.json", function(categoryHolder) {
 
       style.exit().remove();
 
-      style.order();
     });
   }
 
