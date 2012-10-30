@@ -41,12 +41,6 @@ h1, h2 {
   text-rendering: optimizeLegibility;
 }
 
-#body > p {
-  line-height: 1.5em;
-  width: 640px;
-  text-rendering: optimizeLegibility;
-}
-
 #charts {
   padding: 10px 0;
 }
@@ -119,32 +113,54 @@ h1, h2 {
 #style-list .style {
   line-height: 1.5em;
   background: #eee;
-  width: 640px;
+  width: 945px;
   margin-bottom: 1px;
+}
+
+#style-list .style-header {
+  line-height: 1.5em;
+  width: 945px;
+  margin-bottom: 1px;
+  padding: 1px 1px 1px 1px;
 }
 
 #style-list .cat-number {
   color: #999;
-  width: 50px;
+  width: 35px;
 }
 
 #style-list .cat-name {
-  width: 200px;
+  width: 230px;
 }
 
 #style-list .subcat-name {
-  width: 200px;
+  width: 290px;
 }
 
-#style-list .style div {
+#style-list .og {
+  width: 95px;
+}
+
+#style-list .fg {
+  width: 95px;
+}
+
+#style-list .abv {
+  width: 70px;
+}
+
+#style-list .ibu {
+  width: 60px;
+}
+
+#style-list .srm {
+  width: 70px;
+}
+
+#style-list .style div,
+#style-list .style-header div {
   display: inline-block;
-}
-
-#style-list div.distance,
-#style-list div.delay {
-  width: 160px;
-  padding-right: 10px;
-  text-align: right;
+  font-size: 14px;
 }
 
 #style-list .early {
@@ -189,9 +205,8 @@ aside {
 
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> styles selected.</aside>
 
-<div id="lists">
-  <div id="style-list" class="list"></div>
-</div>
+<br/>
+<div id="lists"><div id="style-list" class="list"><div class="style-header"><div class="cat-number">ID</div><div class="cat-name">Category</div><div class="subcat-name">Subcategory</div><div class="og">OG</div><div class="fg">FG</div><div class="abv">ABV</div><div class="ibu">IBU</div><div class="srm">SRM</div></div></div></div>
 
 <footer>
   <span style="float:right;">
@@ -359,6 +374,26 @@ d3.json("bjcp.json", function(categoryHolder) {
       styleEnter.append("div")
           .attr("class", "subcat-name")
           .text(function(d) { return d.values[0].name; });
+
+      styleEnter.append("div")
+          .attr("class", "og")
+          .text(function(d) { return d.values[0].og_low + "-" + d.values[0].og_high; });
+      
+      styleEnter.append("div")
+          .attr("class", "fg")
+          .text(function(d) { return d.values[0].fg_low + "-" + d.values[0].fg_high; });
+
+      styleEnter.append("div")
+          .attr("class", "abv")
+          .text(function(d) { return d.values[0].abv_low + "-" + d.values[0].abv_high; });
+      
+      styleEnter.append("div")
+          .attr("class", "ibu")
+          .text(function(d) { return d.values[0].ibu_low + "-" + d.values[0].ibu_high; });
+      
+      styleEnter.append("div")
+          .attr("class", "srm")
+          .text(function(d) { return d.values[0].srm_low + "-" + d.values[0].srm_high; });
 
       style.exit().remove();
 
