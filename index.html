@@ -274,14 +274,14 @@ d3.json("bjcp.json", function(categoryHolder) {
         .dimension(og)
         .group(ogs)
       .x(d3.scale.linear()
-        .domain([0.95, 1.2])
+        .domain([0.95, 1.15])
         .rangeRound([0, 800])),
 
     barChart()
         .dimension(fg)
         .group(fgs)
       .x(d3.scale.linear()
-        .domain([0.95, 1.2])
+        .domain([0.95, 1.15])
         .rangeRound([0, 800])),
 
     barChart()
@@ -295,7 +295,7 @@ d3.json("bjcp.json", function(categoryHolder) {
         .dimension(ibu)
         .group(ibus)
       .x(d3.scale.linear()
-        .domain([0, 100])
+        .domain([0, 120])
         .rangeRound([0, 1000])),
 
     barChart()
