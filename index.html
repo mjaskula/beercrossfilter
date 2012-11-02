@@ -85,16 +85,16 @@ h1, h2 {
   stroke: #666;
 }
 
-#hour-chart {
-  width: 260px;
+#abv-chart {
+  width: 410px;
 }
 
-#delay-chart {
-  width: 230px;
+#ibu-chart {
+  width: 410px;
 }
 
-#distance-chart {
-  width: 420px;
+#srm-chart {
+  width: 800px;
 }
 
 #date-chart {
@@ -270,47 +270,41 @@ d3.json("bjcp.json", function(categoryHolder) {
 
   var charts = [
 
-    barChart()
-        .dimension(og)
-        .group(ogs)
-      .x(d3.scale.linear()
-        .domain([0.95, 1.15])
-        .rangeRound([0, 800])),
+    barChart().dimension(og)
+              .group(ogs)
+              .x(d3.scale.linear()
+                         .domain([0.95, 1.15])
+                         .rangeRound([0, 800])),
 
-    barChart()
-        .dimension(fg)
-        .group(fgs)
-      .x(d3.scale.linear()
-        .domain([0.95, 1.15])
-        .rangeRound([0, 800])),
+    barChart().dimension(fg)
+              .group(fgs)
+              .x(d3.scale.linear()
+                         .domain([0.95, 1.15])
+                         .rangeRound([0, 800])),
 
-    barChart()
-        .dimension(abv)
-        .group(abvs)
-      .x(d3.scale.linear()
-        .domain([0, 15])
-        .rangeRound([0, 800])),
+    barChart().dimension(abv)
+              .group(abvs)
+              .x(d3.scale.linear()
+                         .domain([0, 15])
+                         .rangeRound([0, 390])),
 
-    barChart()
-        .dimension(ibu)
-        .group(ibus)
-      .x(d3.scale.linear()
-        .domain([0, 120])
-        .rangeRound([0, 1000])),
+    barChart().dimension(ibu)
+              .group(ibus)
+              .x(d3.scale.linear()
+                         .domain([0, 120])
+                        .rangeRound([0, 390])),
 
-    barChart()
-        .dimension(srm)
-        .group(srms)
-      .x(d3.scale.linear()
-        .domain([0, 70])
-        .rangeRound([0, 700])),
+    barChart().dimension(srm)
+              .group(srms)
+              .x(d3.scale.linear()
+                         .domain([0, 70])
+                         .rangeRound([0, 800])),
 
-    barChart()
-        .dimension(cat)
-        .group(cats)
-      .x(d3.scale.linear()
-        .domain([1, 29])
-        .rangeRound([1, 290])),
+    barChart().dimension(cat)
+              .group(cats)
+              .x(d3.scale.linear()
+                         .domain([1, 29])
+                         .rangeRound([1, 290])),
 
   ];
 
