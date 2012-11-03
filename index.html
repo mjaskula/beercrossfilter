@@ -223,6 +223,10 @@ aside {
 <script src="d3.v2.min.js"></script>
 <script>
 
+var GRAVITY_LOW  = 0.995;
+var GRAVITY_HIGH = 1.15;
+
+
 d3.json("bjcp.json", function(categoryHolder) {
   
   // Various formatters.
@@ -233,9 +237,18 @@ d3.json("bjcp.json", function(categoryHolder) {
 
   // A nest operator, for grouping the style list.
   var nestById = d3.nest()
-      .key(function(d) { return d.id; });
+      .key(function(d) { return d.catId + d.subCatId; });
 
   var styles = new Array();
+  var styleDefs = {};
+
+  function forEveryValue(low, high, increment, f) {
+    if (low && high) {
+      for (var i = low; i <= high; i += increment) {
+        f(i);
+      }
+    }
+  }
 
   categoryHolder.categories.forEach(function(category) {
     category.subcategories.forEach(function(style) {
@@ -243,7 +256,21 @@ d3.json("bjcp.json", function(categoryHolder) {
       var id = style.id;
       style.catId = +id.substring(0, id.length - 1);
       style.subCatId = id.substring(id.length - 1);
-      styles.push(style);
+      styleDefs[style.id] = style;
+
+      forEveryValue(+style.og_low, +style.og_high, 0.001, function(og) {
+        console.log(og + " \n");
+        // TODO: remove unused data from this obj to save memory
+        styles.push({category: category.name,
+                     catId: style.catId,
+                     subCatId: style.subCatId,
+                     name: style.name,
+                     og: og,
+                     fg: style.fg_low,
+                     srm: style.srm_low,
+                     ibu: style.ibu_low,
+                     abv: style.abv_low});
+      });
     });
   });
 
@@ -255,15 +282,15 @@ d3.json("bjcp.json", function(categoryHolder) {
   // Create the crossfilter for the relevant dimensions and groups.
   var style = crossfilter(styles),
       all = style.groupAll(),
-      og = style.dimension(function(d) { return d.og_low; }),
+      og = style.dimension(function(d) { return d.og; }),
       ogs = og.group(),
-      fg = style.dimension(function(d) { return d.fg_low; }),
+      fg = style.dimension(function(d) { return d.fg; }),
       fgs = fg.group(),
-      abv = style.dimension(function(d) { return d.abv_low; }),
+      abv = style.dimension(function(d) { return d.abv; }),
       abvs = abv.group(),
-      ibu = style.dimension(function(d) { return d.ibu_low; }),
+      ibu = style.dimension(function(d) { return d.ibu; }),
       ibus = ibu.group(),
-      srm = style.dimension(function(d) { return d.srm_low; }),
+      srm = style.dimension(function(d) { return d.srm; }),
       srms = srm.group(),
       cat = style.dimension(function(d) { return d.catId; }),
       cats = cat.group();
@@ -273,13 +300,13 @@ d3.json("bjcp.json", function(categoryHolder) {
     barChart().dimension(og)
               .group(ogs)
               .x(d3.scale.linear()
-                         .domain([0.95, 1.15])
+                         .domain([GRAVITY_LOW, GRAVITY_HIGH])
                          .rangeRound([0, 800])),
 
     barChart().dimension(fg)
               .group(fgs)
               .x(d3.scale.linear()
-                         .domain([0.95, 1.15])
+                         .domain([GRAVITY_LOW, GRAVITY_HIGH])
                          .rangeRound([0, 800])),
 
     barChart().dimension(abv)
@@ -348,7 +375,7 @@ d3.json("bjcp.json", function(categoryHolder) {
   };
 
   function styleList(div) {
-    var stylesById = nestById.entries(cat.top(1000)); //All of em
+    var stylesById = nestById.entries(cat.top(3000)); //All of em
 
     div.each(function() {
       var style = d3.select(this).selectAll(".style")
@@ -359,35 +386,37 @@ d3.json("bjcp.json", function(categoryHolder) {
 
       styleEnter.append("div")
           .attr("class", "cat-number")
-          .text(function(d) { return d.key; });
+          .text(function(d) { 
+            return d.key; 
+          });
 
       styleEnter.append("div")
           .attr("class", "cat-name")
-          .text(function(d) { return d.values[0].category; });
+          .text(function(d) { return styleDefs[d.key].category; });
 
       styleEnter.append("div")
           .attr("class", "subcat-name")
-          .text(function(d) { return d.values[0].name; });
+          .text(function(d) { return styleDefs[d.key].name; });
 
       styleEnter.append("div")
           .attr("class", "og")
-          .text(function(d) { return d.values[0].og_low + "-" + d.values[0].og_high; });
+          .text(function(d) { return styleDefs[d.key].og_low + "-" + styleDefs[d.key].og_high; });
       
       styleEnter.append("div")
           .attr("class", "fg")
-          .text(function(d) { return d.values[0].fg_low + "-" + d.values[0].fg_high; });
+          .text(function(d) { return styleDefs[d.key].fg_low + "-" + styleDefs[d.key].fg_high; });
 
       styleEnter.append("div")
           .attr("class", "abv")
-          .text(function(d) { return d.values[0].abv_low + "-" + d.values[0].abv_high; });
+          .text(function(d) { return styleDefs[d.key].abv_low + "-" + styleDefs[d.key].abv_high; });
       
       styleEnter.append("div")
           .attr("class", "ibu")
-          .text(function(d) { return d.values[0].ibu_low + "-" + d.values[0].ibu_high; });
+          .text(function(d) { return styleDefs[d.key].ibu_low + "-" + styleDefs[d.key].ibu_high; });
       
       styleEnter.append("div")
           .attr("class", "srm")
-          .text(function(d) { return d.values[0].srm_low + "-" + d.values[0].srm_high; });
+          .text(function(d) { return styleDefs[d.key].srm_low + "-" + styleDefs[d.key].srm_high; });
 
       style.exit().remove();
 
