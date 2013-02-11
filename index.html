@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>BJCP Crossfilter</title>
+<title>Beer Crossfilter</title>
 <style>
 
 @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
@@ -178,9 +178,9 @@ aside {
 
 <div id="body">
 
-<h1>BJCP Crossfilter</h1>
+<h1>Beer Crossfilter</h1>
 
-<h2>Fast Multidimensional Filtering for BJCP Styles</h2>
+<h2>Fast Multidimensional Filtering for Beer data</h2>
 
 <div id="charts">
   <div id="og-chart" class="chart">
@@ -203,7 +203,7 @@ aside {
   </div>
 </div>
 
-<aside id="totals"><span id="active">-</span> of <span id="total">-</span> styles selected.</aside>
+<aside id="totals"><span id="active">-</span> of <span id="total">-</span> beers selected.</aside>
 
 <br/>
 <div id="lists"><div id="style-list" class="list"><div class="style-header"><div class="cat-number">ID</div><div class="cat-name">Category</div><div class="subcat-name">Subcategory</div><div class="og">OG</div><div class="fg">FG</div><div class="abv">ABV</div><div class="ibu">IBU</div><div class="srm">SRM</div></div></div></div>
@@ -217,7 +217,7 @@ aside {
 
 </div>
 
-<a href="https://github.com/mjaskula/bjcpcrossfilter"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+<a href="https://github.com/mjaskula/beercrossfilter"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
 <script src="crossfilter.v1.js"></script>
 <script src="d3.v2.min.js"></script>
@@ -225,10 +225,8 @@ aside {
 
 var GRAVITY_LOW  = 0.995;
 var GRAVITY_HIGH = 1.15;
-var IBU_VALUES = [3, 8, 10, 12, 15, 16, 17, 18, 20, 22, 23, 25, 26, 27, 28, 30, 32, 35, 40, 45, 50, 60, 70, 75, 90, 120];
-var SRM_VALUES = [2, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 25, 28, 30, 35, 40];
 
-d3.json("bjcp.json", function(categoryHolder) {
+d3.json("beers.json", function(beers) {
   
   // Various formatters.
   var formatNumber = d3.format(",d"),
@@ -238,72 +236,19 @@ d3.json("bjcp.json", function(categoryHolder) {
 
   // A nest operator, for grouping the style list.
   var nestById = d3.nest()
-      .key(function(d) { return d.catId + d.subCatId; });
-
-  var styles = new Array();
-  var styleDefs = {};
-
-  function forEveryValue(low, high, increment, f) {
-    if (low && high) {
-      for (var i = low; i <= high; i += increment) {
-        f(i);
-      }
-    }
-  }
-
-  function forValuesIn(low, high, values, f) {
-    if (low && high) {
-      values.forEach(function(v) {
-        if (v >= low && v <= high) {
-          f(v);
-        }
-      });
-    }
-  }
-
-  categoryHolder.categories.forEach(function(category) {
-    category.subcategories.forEach(function(style) {
-      style.category = category.name;
-      var id = style.id;
-      style.catId = +id.substring(0, id.length - 1);
-      style.subCatId = id.substring(id.length - 1);
-      styleDefs[style.id] = style;
-      if (!style.ibu_low ) { style.ibu_low  = 0;}
-      if (!style.ibu_high) { style.ibu_high = 0;}
-
-      forEveryValue(+style.og_low, +style.og_high, 0.002, function(og) {
-        forEveryValue(+style.fg_low, +style.fg_high, 0.002, function(fg) {
-          forEveryValue(+style.abv_low, +style.abv_high, 0.2, function(abv) {
-            forValuesIn(+style.ibu_low, +style.ibu_high, IBU_VALUES, function(ibu) {
-              forValuesIn(+style.srm_low, +style.srm_high, SRM_VALUES, function(srm) {
-                // TODO: remove unused data from this obj to save memory
-                styles.push({category: category.name,
-                             catId: style.catId,
-                             subCatId: style.subCatId,
-                             og: og,
-                             fg: fg,
-                             srm: srm,
-                             ibu: ibu,
-                             abv: abv});
-              });
-            });
-          });
-        });
-      });
-    });
-  });
+      .key(function(d) { return d.styleId; });
 
   // A little coercion, since the CSV is untyped.
-  styles.forEach(function(d, i) {
+  beers.forEach(function(d, i) {
     d.index = i;
   });
 
   // Create the crossfilter for the relevant dimensions and groups.
-  var style = crossfilter(styles),
+  var style = crossfilter(beers),
       all = style.groupAll(),
       og = style.dimension(function(d) { return d.og; }),
       ogs = og.group(),
-      fg = style.dimension(function(d) { return d.fg; }),
+      fg = style.dimension(function(d) { return d.og; }),
       fgs = fg.group(),
       abv = style.dimension(function(d) { return d.abv; }),
       abvs = abv.group(),
@@ -311,7 +256,7 @@ d3.json("bjcp.json", function(categoryHolder) {
       ibus = ibu.group(),
       srm = style.dimension(function(d) { return d.srm; }),
       srms = srm.group(),
-      cat = style.dimension(function(d) { return d.catId; }),
+      cat = style.dimension(function(d) { return d.styleId; }),
       cats = cat.group();
 
   var charts = [
