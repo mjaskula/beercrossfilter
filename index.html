@@ -186,9 +186,6 @@ aside {
   <div id="og-chart" class="chart">
     <div class="title">Original Gravity</div>
   </div>
-  <div id="fg-chart" class="chart">
-    <div class="title">Final Gravity</div>
-  </div>
   <div id="abv-chart" class="chart">
     <div class="title">Alcohol by Volume</div>
   </div>
@@ -206,7 +203,7 @@ aside {
 <aside id="totals"><span id="active">-</span> of <span id="total">-</span> beers selected.</aside>
 
 <br/>
-<div id="lists"><div id="style-list" class="list"><div class="style-header"><div class="cat-number">ID</div><div class="cat-name">Category</div><div class="subcat-name">Subcategory</div><div class="og">OG</div><div class="fg">FG</div><div class="abv">ABV</div><div class="ibu">IBU</div><div class="srm">SRM</div></div></div></div>
+<div id="lists"><div id="style-list" class="list"><div class="style-header"><div class="cat-number">ID</div><div class="cat-name">Category</div><div class="subcat-name">Subcategory</div><div class="og">OG</div><div class="abv">ABV</div><div class="ibu">IBU</div><div class="srm">SRM</div></div></div></div>
 
 <footer>
   <span style="float:right;">
@@ -248,8 +245,6 @@ d3.json("beers.json", function(beers) {
       all = style.groupAll(),
       og = style.dimension(function(d) { return d.og; }),
       ogs = og.group(),
-      fg = style.dimension(function(d) { return d.og; }),
-      fgs = fg.group(),
       abv = style.dimension(function(d) { return d.abv; }),
       abvs = abv.group(),
       ibu = style.dimension(function(d) { return d.ibu; }),
@@ -263,12 +258,6 @@ d3.json("beers.json", function(beers) {
 
     barChart().dimension(og)
               .group(ogs)
-              .x(d3.scale.linear()
-                         .domain([GRAVITY_LOW, GRAVITY_HIGH])
-                         .rangeRound([0, 800])),
-
-    barChart().dimension(fg)
-              .group(fgs)
               .x(d3.scale.linear()
                          .domain([GRAVITY_LOW, GRAVITY_HIGH])
                          .rangeRound([0, 800])),
@@ -366,10 +355,6 @@ d3.json("beers.json", function(beers) {
           .attr("class", "og")
           .text(function(d) { return styleDefs[d.key].og_low + "-" + styleDefs[d.key].og_high; });
       
-      styleEnter.append("div")
-          .attr("class", "fg")
-          .text(function(d) { return styleDefs[d.key].fg_low + "-" + styleDefs[d.key].fg_high; });
-
       styleEnter.append("div")
           .attr("class", "abv")
           .text(function(d) { return styleDefs[d.key].abv_low + "-" + styleDefs[d.key].abv_high; });
