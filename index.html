@@ -1,8 +1,22 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<title>Beer Crossfilter</title>
-<style>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Beer Crossfilter</title>
+
+    <meta charset="UTF-8">
+
+	<script type="text/javascript" src="crossfilter.v1.min.js"></script>
+	<script type="text/javascript" src="d3.v2.min.js"></script>
+	<script type="text/javascript" src="dc.min.js"></script>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+
+
+<style>
 @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700);
 
 body {
@@ -85,94 +99,202 @@ h1, h2 {
   stroke: #666;
 }
 
-#abv-chart {
-  width: 410px;
+#.data-count {
+    float: right;
+    margin-top: 15px;
+    margin-right: 15px;
 }
 
-#ibu-chart {
-  width: 410px;
+.data-count .filter-count {
+    color: #3182bd;
+    font-weight: bold;
 }
 
-#srm-chart {
-  width: 800px;
+.data-count .total-count {
+    color: #3182bd;
+    font-weight: bold;
 }
 
-#date-chart {
-  width: 920px;
+.data-table {}
+
+/*dc.css*/
+
+.dc-chart {
+    float: left;
 }
 
-#style-list {
-  min-height: 1024px;
+.dc-chart rect.bar {
+    stroke: none;
+    fill: steelblue;
 }
 
-#style-list .date,
-#style-list .day {
-  margin-bottom: .4em;
+.dc-chart rect.bar:hover {
+    fill-opacity: .5;
 }
 
-#style-list .style {
-  line-height: 1.5em;
-  background: #eee;
-  width: 945px;
-  margin-bottom: 1px;
+.dc-chart rect.deselected {
+    stroke: none;
+    fill: #ccc;
 }
 
-#style-list .style-header {
-  line-height: 1.5em;
-  width: 945px;
-  margin-bottom: 1px;
-  padding: 1px 1px 1px 1px;
+.dc-chart .sub .bar {
+    stroke: none;
+    fill: #ccc;
 }
 
-#style-list .cat-number {
-  color: #999;
-  width: 35px;
+.dc-chart .selected path{
+    stroke-width: 3;
+    stroke: #ccc;
+    fill-opacity: 1;
 }
 
-#style-list .cat-name {
-  width: 230px;
+.dc-chart .deselected path{
+    strok: none;
+    fill-opacity: .5;
+    fill: #ccc;
 }
 
-#style-list .subcat-name {
-  width: 290px;
+.dc-chart .axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
 
-#style-list .og {
-  width: 95px;
+.dc-chart .axis text {
+    font: 10px sans-serif;
 }
 
-#style-list .fg {
-  width: 95px;
+.dc-chart .grid-line line {
+    fill: none;
+    stroke: #ccc;
+    opacity: .5;
+    shape-rendering: crispEdges;
 }
 
-#style-list .abv {
-  width: 70px;
+.dc-chart .brush rect.background {
+    z-index: -999;
 }
 
-#style-list .ibu {
-  width: 60px;
+.dc-chart .brush rect.extent {
+    fill: steelblue;
+    fill-opacity: .125;
 }
 
-#style-list .srm {
-  width: 70px;
+.dc-chart .brush .resize path {
+    fill: #eee;
+    stroke: #666;
 }
 
-#style-list .style div,
-#style-list .style-header div {
-  display: inline-block;
-  font-size: 14px;
+.dc-chart path.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
 }
 
-#style-list .early {
-  color: green;
+.dc-chart circle.dot{
+    fill: steelblue;
 }
 
-aside {
-  position: absolute;
-  left: 740px;
-  font-size: smaller;
-  width: 230px;
+.dc-chart g.dc-tooltip path{
+    fill: none;
+    stroke: grey;
+    stroke-opacity: .8;
 }
+
+.dc-chart path.area {
+    fill: steelblue;
+    fill-opacity: .3;
+    stroke: none;
+}
+
+.dc-chart g.stack1 path.area {
+    fill: green;
+}
+
+.dc-chart g.stack2 path.area {
+    fill: red;
+}
+
+.dc-chart .node {
+    font-size: 0.7em;
+    cursor: pointer;
+}
+
+.dc-chart .node :hover{
+    fill-opacity: .8;
+}
+
+.dc-chart .selected circle {
+    stroke-width: 3;
+    stroke: #ccc;
+    fill-opacity: 1;
+}
+
+.dc-chart .deselected circle {
+    strok: none;
+    fill-opacity: .5;
+    fill: #ccc;
+}
+
+.dc-chart .bubble {
+    stroke: none;
+    fill-opacity: 0.6;
+}
+
+.dc-data-count {
+    float: right;
+    margin-top: 15px;
+    margin-right: 15px;
+}
+
+.dc-data-count .filter-count {
+    color: #3182bd;
+    font-weight: bold;
+}
+
+.dc-data-count .total-count {
+    color: #3182bd;
+    font-weight: bold;
+}
+
+.dc-data-table {}
+
+.dc-chart g.state{
+    cursor: pointer;
+}
+
+.dc-chart g.state :hover{
+    fill-opacity: .8;
+}
+
+.dc-chart g.state path {
+    stroke: white;
+}
+
+.dc-chart g.selected path {
+}
+
+.dc-chart g.deselected path {
+    fill: grey;
+}
+
+.dc-chart g.selected text {
+}
+
+.dc-chart g.deselected text {
+    display: none;
+}
+
+.dc-chart g.county path {
+    stroke: white;
+    fill: none;
+}
+
+.dc-chart g.debug rect{
+    fill: blue;
+    fill-opacity: .2;
+}
+/*end dc.css*/
 
 </style>
 
@@ -180,35 +302,61 @@ aside {
 
 <h1>Beer Crossfilter</h1>
 
-<h2>Fast Multidimensional Filtering for Beer data</h2>
+<br/>
 
 <div id="charts">
-  <div id="og-chart" class="chart">
+  <div id="og-chart" class="dc-chart">
     <div class="title">Original Gravity</div>
+    <a class="reset" href="javascript:ogChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
   </div>
-  <div id="abv-chart" class="chart">
+  <br/>
+  <div id="abv-chart" class="dc-chart">
     <div class="title">Alcohol by Volume</div>
+    <a class="reset" href="javascript:abvChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
   </div>
-  <div id="ibu-chart" class="chart">
+  <br/>
+  <div id="ibu-chart" class="dc-chart">
     <div class="title">International Bitterness Units</div>
+    <a class="reset" href="javascript:ibuChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
   </div>
-  <div id="srm-chart" class="chart">
-    <div class="title">Color</div>
+  <br/>
+  <div id="srm-chart" class="dc-chart">
+    <div class="title">SRM</div>
+    <a class="reset" href="javascript:srmChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
   </div>
-  <div id="cat-chart" class="chart">
-    <div class="title">Category</div>
+  <br/>
+  <div id="style-chart" class="dc-chart">
+    <div class="title">Style</div>
+    <a class="reset" href="javascript:styleChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;">Current filter: <span class="filter"></span></span>
   </div>
 </div>
-
-<aside id="totals"><span id="active">-</span> of <span id="total">-</span> beers selected.</aside>
-
 <br/>
-<div id="lists"><div id="style-list" class="list"><div class="style-header"><div class="cat-number">ID</div><div class="cat-name">Category</div><div class="subcat-name">Subcategory</div><div class="og">OG</div><div class="abv">ABV</div><div class="ibu">IBU</div><div class="srm">SRM</div></div></div></div>
+<div class="row">
+    <div >
+        <div class="data-count">
+            <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+        </div>
+    </div>
+    <br/>
+    <table class="table table-hover data-table">
+        <thead>
+        <tr class="header">
+            <th>Style</th>
+            <th>OG</th>
+            <th>ABV</th>
+            <th>IBU</th>
+            <th>SRM</th>
+        </tr>
+        </thead>
+    </table>
+</div>
 
 <footer>
-  <span style="float:right;">
-    Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.
-  </span>
   Copyright 2012 <a href="https://github.com/mjaskula">Matthew Jaskula</a>
 </footer>
 
@@ -216,353 +364,103 @@ aside {
 
 <a href="https://github.com/mjaskula/beercrossfilter"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 
-<script src="crossfilter.v1.js"></script>
-<script src="d3.v2.min.js"></script>
-<script>
+<script  type="text/javascript">
 
-var GRAVITY_LOW  = 0.995;
-var GRAVITY_HIGH = 1.15;
+var ogChart  = dc.barChart("#og-chart");
+var abvChart = dc.barChart("#abv-chart");
+// var ibuChart = dc.barChart("#ibu-chart");
+// var srmChart = dc.barChart("#srm-chart");
 
-d3.json("beers.json", function(beers) {
-  
-  // Various formatters.
-  var formatNumber = d3.format(",d"),
-      formatChange = d3.format("+,d"),
-      formatDate = d3.time.format("%B %d, %Y"),
-      formatTime = d3.time.format("%I:%M %p"); // TODO: unnecessary formatters
+d3.json("beers.json", function(data) {
 
-  // A nest operator, for grouping the style list.
-  var nestById = d3.nest()
-      .key(function(d) { return d.styleId; });
+	data.forEach(function(b) { 
+		b.og = parseFloat(b.og).toPrecision(4);
+		if (b.og > 2) {
+			b.og = 1.050 // TODO: convert from plato?
+		}
+	});
 
-  // A little coercion, since the CSV is untyped.
-  beers.forEach(function(d, i) {
-    d.index = i;
-  });
+	// feed it through crossfilter
+	var beercrossfilter = crossfilter(data);
+	 
+	// define group all for counting
+	var all = beercrossfilter.groupAll();
+	 
+	// define dimensions
+	var ogDimension      = beercrossfilter.dimension(function(d) { return d.og; });
+	var abvDimension     = beercrossfilter.dimension(function(d) { return d.abv; });
+	var ibuDimension     = beercrossfilter.dimension(function(d) { return d.ibu; });
+	var srmDimension     = beercrossfilter.dimension(function(d) { return d.srm; });
+	var styleIdDimension = beercrossfilter.dimension(function(d) { return d.styleId; });
 
-  // Create the crossfilter for the relevant dimensions and groups.
-  var style = crossfilter(beers),
-      all = style.groupAll(),
-      og = style.dimension(function(d) { return d.og; }),
-      ogs = og.group(),
-      abv = style.dimension(function(d) { return d.abv; }),
-      abvs = abv.group(),
-      ibu = style.dimension(function(d) { return d.ibu; }),
-      ibus = ibu.group(),
-      srm = style.dimension(function(d) { return d.srm; }),
-      srms = srm.group(),
-      cat = style.dimension(function(d) { return d.styleId; }),
-      cats = cat.group();
+	// map/reduce to group sum
+	var ogGroup      = ogDimension.group();
+	var abvGroup     = abvDimension.group();
+	var ibuGroup     = ibuDimension.group();
+	var srmGroup     = srmDimension.group();
+	var styleIdGroup = styleIdDimension.group();
 
-  var charts = [
+  ogChart
+    .dimension(ogDimension)
+    .group(ogGroup)
+    .width(1000)
+    .height(250)
+    .margins({top: 10, right: 50, bottom: 30, left: 40})
+    .transitionDuration(250)
+    .gap(1)
+    .x(d3.scale.linear().domain([0.995, 1.15]))
+    .xUnits(dc.units.float.precision(0.001))
+    .renderHorizontalGridLines(true)
+    .renderVerticalGridLines(true);
 
-    barChart().dimension(og)
-              .group(ogs)
-              .x(d3.scale.linear()
-                         .domain([GRAVITY_LOW, GRAVITY_HIGH])
-                         .rangeRound([0, 800])),
-
-    barChart().dimension(abv)
-              .group(abvs)
-              .x(d3.scale.linear()
-                         .domain([0, 15])
-                         .rangeRound([0, 390])),
-
-    barChart().dimension(ibu)
-              .group(ibus)
-              .x(d3.scale.linear()
-                         .domain([0, 125])
-                        .rangeRound([0, 390])),
-
-    barChart().dimension(srm)
-              .group(srms)
-              .x(d3.scale.linear()
-                         .domain([0, 70])
-                         .rangeRound([0, 800])),
-
-    barChart().dimension(cat)
-              .group(cats)
-              .x(d3.scale.linear()
-                         .domain([1, 29])
-                         .rangeRound([1, 290])),
-
-  ];
-
-  // Given our array of charts, which we assume are in the same order as the
-  // .chart elements in the DOM, bind the charts to the DOM and render them.
-  // We also listen to the chart's brush events to update the display.
-  var chart = d3.selectAll(".chart")
-      .data(charts)
-      .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
-
-  // Render the initial lists.
-  var list = d3.selectAll(".list")
-      .data([styleList]);
-
-  // Render the total.
-  d3.selectAll("#total")
-      .text(formatNumber(style.size()));
-
-  renderAll();
-
-  // Renders the specified chart or list.
-  function render(method) {
-    d3.select(this).call(method);
-  }
-
-  // Whenever the brush moves, re-rendering everything.
-  function renderAll() {
-    chart.each(render);
-    list.each(render);
-    d3.select("#active").text(formatNumber(all.value()));
-  }
-
-  window.filter = function(filters) {
-    filters.forEach(function(d, i) { charts[i].filter(d); });
-    renderAll();
-  };
-
-  window.reset = function(i) {
-    charts[i].filter(null);
-    renderAll();
-  };
-
-  function styleList(div) {
-    var stylesById = nestById.entries(cat.top(Infinity)); //All of em
-
-    div.each(function() {
-      var style = d3.select(this).selectAll(".style")
-          .data(stylesById);
-
-      var styleEnter = style.enter().append("div")
-          .attr("class", "style");
-
-      styleEnter.append("div")
-          .attr("class", "cat-number")
-          .text(function(d) { 
-            return d.key; 
-          });
-
-      styleEnter.append("div")
-          .attr("class", "cat-name")
-          .text(function(d) { return styleDefs[d.key].category; });
-
-      styleEnter.append("div")
-          .attr("class", "subcat-name")
-          .text(function(d) { return styleDefs[d.key].name; });
-
-      styleEnter.append("div")
-          .attr("class", "og")
-          .text(function(d) { return styleDefs[d.key].og_low + "-" + styleDefs[d.key].og_high; });
-      
-      styleEnter.append("div")
-          .attr("class", "abv")
-          .text(function(d) { return styleDefs[d.key].abv_low + "-" + styleDefs[d.key].abv_high; });
-      
-      styleEnter.append("div")
-          .attr("class", "ibu")
-          .text(function(d) { return styleDefs[d.key].ibu_low + "-" + styleDefs[d.key].ibu_high; });
-      
-      styleEnter.append("div")
-          .attr("class", "srm")
-          .text(function(d) { return styleDefs[d.key].srm_low + "-" + styleDefs[d.key].srm_high; });
-
-      style.exit().remove();
-
-    });
-  }
-
-  function barChart() {
-    if (!barChart.id) barChart.id = 0;
-
-    var margin = {top: 10, right: 10, bottom: 20, left: 10},
-        x,
-        y = d3.scale.linear().range([100, 0]),
-        id = barChart.id++,
-        axis = d3.svg.axis().orient("bottom"),
-        brush = d3.svg.brush(),
-        brushDirty,
-        dimension,
-        group,
-        round;
-
-    function chart(div) {
-      var width = x.range()[1],
-          height = y.range()[0];
-
-      y.domain([0, group.top(1)[0].value]);
-
-      div.each(function() {
-        var div = d3.select(this),
-            g = div.select("g");
-
-        // Create the skeletal chart.
-        if (g.empty()) {
-          div.select(".title").append("a")
-              .attr("href", "javascript:reset(" + id + ")")
-              .attr("class", "reset")
-              .text("reset")
-              .style("display", "none");
-
-          g = div.append("svg")
-              .attr("width", width + margin.left + margin.right)
-              .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-          g.append("clipPath")
-              .attr("id", "clip-" + id)
-            .append("rect")
-              .attr("width", width)
-              .attr("height", height);
-
-          g.selectAll(".bar")
-              .data(["background", "foreground"])
-            .enter().append("path")
-              .attr("class", function(d) { return d + " bar"; })
-              .datum(group.all());
-
-          g.selectAll(".foreground.bar")
-              .attr("clip-path", "url(#clip-" + id + ")");
-
-          g.append("g")
-              .attr("class", "axis")
-              .attr("transform", "translate(0," + height + ")")
-              .call(axis);
-
-          // Initialize the brush component with pretty resize handles.
-          var gBrush = g.append("g").attr("class", "brush").call(brush);
-          gBrush.selectAll("rect").attr("height", height);
-          gBrush.selectAll(".resize").append("path").attr("d", resizePath);
-        }
-
-        // Only redraw the brush if set externally.
-        if (brushDirty) {
-          brushDirty = false;
-          g.selectAll(".brush").call(brush);
-          div.select(".title a").style("display", brush.empty() ? "none" : null);
-          if (brush.empty()) {
-            g.selectAll("#clip-" + id + " rect")
-                .attr("x", 0)
-                .attr("width", width);
-          } else {
-            var extent = brush.extent();
-            g.selectAll("#clip-" + id + " rect")
-                .attr("x", x(extent[0]))
-                .attr("width", x(extent[1]) - x(extent[0]));
-          }
-        }
-
-        g.selectAll(".bar").attr("d", barPath);
-      });
-
-      function barPath(groups) {
-        var path = [],
-            i = -1,
-            n = groups.length,
-            d;
-        while (++i < n) {
-          d = groups[i];
-          path.push("M", x(d.key), ",", height, "V", y(d.value), "h9V", height);
-        }
-        return path.join("");
-      }
-
-      function resizePath(d) {
-        var e = +(d == "e"),
-            x = e ? 1 : -1,
-            y = height / 3;
-        return "M" + (.5 * x) + "," + y
-            + "A6,6 0 0 " + e + " " + (6.5 * x) + "," + (y + 6)
-            + "V" + (2 * y - 6)
-            + "A6,6 0 0 " + e + " " + (.5 * x) + "," + (2 * y)
-            + "Z"
-            + "M" + (2.5 * x) + "," + (y + 8)
-            + "V" + (2 * y - 8)
-            + "M" + (4.5 * x) + "," + (y + 8)
-            + "V" + (2 * y - 8);
-      }
-    }
-
-    brush.on("brushstart.chart", function() {
-      var div = d3.select(this.parentNode.parentNode.parentNode);
-      div.select(".title a").style("display", null);
+  abvChart
+    .dimension(abvDimension)
+    .group(abvGroup)
+    .width(1000)
+    .height(250)
+    .margins({top: 10, right: 50, bottom: 30, left: 40})
+    .transitionDuration(250)
+    .gap(1)
+    .x(d3.scale.linear().domain([0, 12]))
+    .xUnits(dc.units.float.precision(0.1))
+    .renderHorizontalGridLines(true)
+    .renderVerticalGridLines(true)
+    .xAxis()
+    .tickFormat(function(v) {
+        return v + "%";
     });
 
-    brush.on("brush.chart", function() {
-      var g = d3.select(this.parentNode),
-          extent = brush.extent();
-      if (round) g.select(".brush")
-          .call(brush.extent(extent = extent.map(round)))
-        .selectAll(".resize")
-          .style("display", null);
-      g.select("#clip-" + id + " rect")
-          .attr("x", x(extent[0]))
-          .attr("width", x(extent[1]) - x(extent[0]));
-      dimension.filterRange(extent);
-    });
+	dc.dataCount(".data-count")
+	    .dimension(beercrossfilter) // set dimension to all data
+	    .group(all); // set group to ndx.groupAll()
 
-    brush.on("brushend.chart", function() {
-      if (brush.empty()) {
-        var div = d3.select(this.parentNode.parentNode.parentNode);
-        div.select(".title a").style("display", "none");
-        div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
-        dimension.filterAll();
-      }
-    });
+	dc.dataTable(".data-table")
+	    // set dimension
+	    .dimension(styleIdDimension)
+	    // data table does not use crossfilter group but rather a closure
+	    // as a grouping function
+	    .group(function(d) {
+	        return d.styleId;
+	    })
+	    // (optional) max number of records to be shown, :default = 25
+	    .size(200)
+	    // dynamic columns creation using an array of closures
+	    .columns([
+	        function(d) { return d.style; },
+	        function(d) { return d.og; },
+	        function(d) { return d.abv; },
+	        function(d) { return d.ibu; },
+	        function(d) { return d.srm; }
+	    ])
+	    // (optional) sort using the given field, :default = function(d){return d;}
+	    .sortBy(function(d){ return d.style; })
+	    // (optional) sort order, :default ascending
+	    .order(d3.ascending);
 
-    chart.margin = function(_) {
-      if (!arguments.length) return margin;
-      margin = _;
-      return chart;
-    };
-
-    chart.x = function(_) {
-      if (!arguments.length) return x;
-      x = _;
-      axis.scale(x);
-      brush.x(x);
-      return chart;
-    };
-
-    chart.y = function(_) {
-      if (!arguments.length) return y;
-      y = _;
-      return chart;
-    };
-
-    chart.dimension = function(_) {
-      if (!arguments.length) return dimension;
-      dimension = _;
-      return chart;
-    };
-
-    chart.filter = function(_) {
-      if (_) {
-        brush.extent(_);
-        dimension.filterRange(_);
-      } else {
-        brush.clear();
-        dimension.filterAll();
-      }
-      brushDirty = true;
-      return chart;
-    };
-
-    chart.group = function(_) {
-      if (!arguments.length) return group;
-      group = _;
-      return chart;
-    };
-
-    chart.round = function(_) {
-      if (!arguments.length) return round;
-      round = _;
-      return chart;
-    };
-
-    return d3.rebind(chart, brush, "on");
-  }
+    // simply call renderAll() to render all charts on the page
+	dc.renderAll();
+	 
 });
-
 </script>
+</body>
+</html>
