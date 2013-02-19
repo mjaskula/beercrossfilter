@@ -64,7 +64,8 @@
     <table class="table table-hover data-table">
         <thead>
         <tr class="header">
-            <th>Style</th>
+            <th>Brewery</th>
+            <th>Beer</th>
             <th>OG</th>
             <th>ABV</th>
             <th>IBU</th>
@@ -158,13 +159,14 @@ d3.json("beers.json", function(data) {
 	    // data table does not use crossfilter group but rather a closure
 	    // as a grouping function
 	    .group(function(d) {
-	        return d.styleId;
+	        return d.style;
 	    })
 	    // (optional) max number of records to be shown, :default = 25
 	    .size(200)
 	    // dynamic columns creation using an array of closures
 	    .columns([
-	        function(d) { return d.style; },
+          function(d) { return d.brewery; },
+	        function(d) { return d.name; },
 	        function(d) { return d.og; },
 	        function(d) { return d.abv; },
 	        function(d) { return d.ibu; },
@@ -173,7 +175,8 @@ d3.json("beers.json", function(data) {
 	    // (optional) sort using the given field, :default = function(d){return d;}
 	    .sortBy(function(d){ return d.style; })
 	    // (optional) sort order, :default ascending
-	    .order(d3.ascending);
+	    .order(d3.ascending)
+      .renderlet(function(table){table.selectAll(".dc-table-group").classed("info", true);});
 
     // simply call renderAll() to render all charts on the page
 	dc.renderAll();
