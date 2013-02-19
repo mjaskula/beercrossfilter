@@ -87,16 +87,31 @@
 
 var ogChart  = dc.barChart("#og-chart");
 var abvChart = dc.barChart("#abv-chart");
-// var ibuChart = dc.barChart("#ibu-chart");
-// var srmChart = dc.barChart("#srm-chart");
+var ibuChart = dc.barChart("#ibu-chart");
+var srmChart = dc.barChart("#srm-chart");
+
+function cleanupOG(beer) {
+  beer.og = parseFloat(beer.og).toPrecision(4);
+  if (beer.og > 2) {
+    beer.og = 1.050 // TODO: convert from plato?
+  }
+}
+
+function cleanupIBU(beer) {
+  beer.ibu = Math.round(Number(beer.ibu));
+}
+
+function cleanupSRM(beer) {
+  beer.srm = beer.srm === "Over 40" ? beer.srm = 40
+                                    : beer.srm = parseInt(beer.srm);
+}
 
 d3.json("beers.json", function(data) {
 
-	data.forEach(function(b) { 
-		b.og = parseFloat(b.og).toPrecision(4);
-		if (b.og > 2) {
-			b.og = 1.050 // TODO: convert from plato?
-		}
+	data.forEach(function(beer) {
+    cleanupOG(beer);
+    cleanupIBU(beer);
+		cleanupSRM(beer);
 	});
 
 	// feed it through crossfilter
@@ -148,6 +163,32 @@ d3.json("beers.json", function(data) {
     .tickFormat(function(v) {
         return v + "%";
     });
+
+  ibuChart
+    .dimension(ibuDimension)
+    .group(ibuGroup)
+    .width(1000)
+    .height(250)
+    .margins({top: 10, right: 50, bottom: 30, left: 40})
+    .transitionDuration(250)
+    .gap(1)
+    .x(d3.scale.linear().domain([0, 120]))
+    .renderHorizontalGridLines(true)
+    .renderVerticalGridLines(true)
+    .xAxis();
+
+  srmChart
+    .dimension(srmDimension)
+    .group(srmGroup)
+    .width(1000)
+    .height(250)
+    .margins({top: 10, right: 50, bottom: 30, left: 40})
+    .transitionDuration(250)
+    .gap(1)
+    .x(d3.scale.linear().domain([0, 50]))
+    .renderHorizontalGridLines(true)
+    .renderVerticalGridLines(true)
+    .xAxis();
 
 	dc.dataCount(".data-count")
 	    .dimension(beercrossfilter) // set dimension to all data
